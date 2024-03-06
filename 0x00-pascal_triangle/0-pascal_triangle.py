@@ -1,29 +1,22 @@
-"""Pascal Triangle"""
-
-
 def pascal_triangle(n):
     """
-    Generates Pascal's triangle up to a given number of rows (n).
+    Generate Pascal's Triangle up to the nth row.
 
     Args:
-        n: The number of rows in the triangle.
+    - n: Integer representing the number of rows.
 
     Returns:
-        A list of lists representing the Pascal's triangle.
+    - A list of lists containing the Pascal's Triangle up to the nth row.
     """
     if n <= 0:
         return []
-    triangle = []
 
-    for height in range(n):
+    triangle = [[1]]
+    for i in range(1, n):
         row = [1]
-
-        for i in range(1, height):
-            row.append(triangle[height - 1][i - 1] + triangle[height - 1][i])
-
-        if height > 0:
-            row.append(1)
-
+        for j in range(1, i):
+            row.append(triangle[i-1][j-1] + triangle[i-1][j])
+        row.append(1)
         triangle.append(row)
 
     return triangle
