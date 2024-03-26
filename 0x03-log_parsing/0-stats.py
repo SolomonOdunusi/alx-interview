@@ -1,59 +1,43 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+""" Script that reads stdin"""
 import sys
-import signal
 
 
-status_codes_count = {}
-total_file_size = 0
+def printstdin(date, size):
+    """ print information from stdin """
+    print("File size: {:d}".format(size))
+    for i in sorted(date.keys()):
+        if date[i] != 0:
+            print("{}: {:d}".format(i, date[i]))
 
 
-def signal_handler(sig, frame):
-    """Signal handler for SIGINT."""
-    print_stats()
-    sys.exit(0)
+statusCode = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
+              "404": 0, "405": 0, "500": 0}
+
+counter = 0
+size = 0
+
+try:
+    for line in sys.stdin:
+        if counter != 0 and counter % 10 == 0:
+            printstdin(statusCode, size)
+
+        listStatus = line.split()
+        counter += 1
+
+        try:
+            size += int(listStatus[-1])
+        except:
+            pass
+
+        try:
+            if listStatus[-2] in statusCode:
+                statusCode[listStatus[-2]] += 1
+        except:
+            pass
+    printstdin(statusCode, size)
 
 
-signal.signal(signal.SIGINT, signal_handler)
-
-def print_stats():
-    """Function to print the statistics."""
-    print(f"File size: {total_file_size}")
-    for status_code in sorted(status_codes_count.keys()):
-        print(f"{status_code}: {status_codes_count[status_code]}")
-
-def process_line(line):
-    """Process each line from stdin."""
-    global total_file_size
-    try:
-        parts = line.split()
-        status_code = parts[-2]
-        file_size = int(parts[-1])
-
-
-        total_file_size += file_size
-
-
-        if status_code in status_codes_count:
-            status_codes_count[status_code] += 1
-        else:
-            status_codes_count[status_code] = 1
-    except (IndexError, ValueError):
-        pass
-
-def main():
-    """Main function to read from stdin."""
-    line_count = 0
-    try:
-        for line in sys.stdin:
-            process_line(line.strip())
-            line_count += 1
-            if line_count % 10 == 0:
-                print_stats()
-    except KeyboardInterrupt:
-        print_stats()
-        sys.exit(0)
-
-    print_stats()
-
-if __name__ == "__main__":
-    main()
+except KeyboardInterrupt:
+    printstdin(statusCode, size)
+    raise
