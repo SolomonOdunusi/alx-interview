@@ -1,24 +1,24 @@
 #!/usr/bin/python3
-"""
-UTF Validity Testing
+""" UTF-8 validity testing
 """
 
 
 def validUTF8(data):
-    """Utf-8 validity testing"""
+    """UTF-8 validation
+    """
     count = 0
-    for num in data:
+    for n in data:
         if count == 0:
-            if (num >> 3) == 0b11110:
+            if (n >> 3) == 0b11110:
                 count = 3
-            elif (num >> 4) == 0b1110:
+            elif (n >> 4) == 0b1110:
                 count = 2
-            elif (num >> 5) == 0b110:
+            elif (n >> 5) == 0b110:
                 count = 1
-            elif (num >> 7):
+            elif (n >> 7):
                 return False
         else:
-            if (num >> 6) != 0b10:
+            if (n >> 6) != 0b10:
                 return False
             count -= 1
     return count == 0
