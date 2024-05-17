@@ -1,50 +1,39 @@
 #!/usr/bin/python3
-"""Module for prime game"""
+"""
+Module for prime game
+"""
 
 
 def isWinner(x, nums):
-    # Find the maximum number to generate primes up to this number
-    max_n = max(nums)
-
-    # Sieve of Eratosthenes to find all primes up to max_n
-    sieve = [True] * (max_n + 1)
-    sieve[0] = sieve[1] = False  # 0 and 1 are not prime
-    p = 2
-    while p * p <= max_n:
-        if sieve[p]:
-            for i in range(p * p, max_n + 1, p):
-                sieve[i] = False
-        p += 1
-    primes = [i for i in range(max_n + 1) if sieve[i]]
-
-    # Use this prime list to determine the winner of each game
-    maria_wins = 0
-    ben_wins = 0
-
-    for n in nums:
-        # State tracking for each number from 1 to n
-        playable = [False] * (n + 1)
-
-        # Determine the playable numbers
-        for prime in primes:
-            if prime > n:
-                break
-            # If prime is within n, mark multiples as playable
-            if sieve[prime]:
-                for multiple in range(prime, n + 1, prime):
-                    playable[multiple] = True
-
-        # Count playable numbers
-        count_playable = sum(playable)
-        if count_playable % 2 == 1:
-            maria_wins += 1
-        else:
-            ben_wins += 1
-
-    # Determine the overall winner
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
-        return "Ben"
-    else:
+    """
+    Determine the winner of the prime game
+    """
+    if not nums or x < 1:
         return None
+
+    max_num = max(nums)
+    sieve = [True for _ in range(max(max_num + 1, 2))]
+    
+    for i in range(2, int(pow(max_num, 0.5)) + 1):
+        if not sieve[i]:
+            continue
+        for j in range(i * i, max_num + 1, i):
+            sieve[j] = False
+
+    sieve[0] = sieve[1] = False
+
+    prime_count = 0
+    for i in range(len(sieve)):
+        if sieve[i]:
+            prime_count += 1
+        sieve[i] = prime_count
+
+    maria_wins = 0
+    for num in nums:
+        maria_wins += sieve[num] % 2 == 1
+
+    if maria_wins * 2 == len(nums):
+        return None
+    if maria_wins * 2 > len(nums):
+        return "Maria"
+    return "Ben"
