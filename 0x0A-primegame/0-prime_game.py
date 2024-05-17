@@ -13,7 +13,7 @@ def isWinner(x, nums):
 
     max_num = max(nums)
     sieve = [True for _ in range(max(max_num + 1, 2))]
-    
+
     for i in range(2, int(pow(max_num, 0.5)) + 1):
         if not sieve[i]:
             continue
